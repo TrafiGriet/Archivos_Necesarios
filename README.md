@@ -111,7 +111,12 @@ Si ya realizaste estos pasos y tienes la estructura del proyecto como se muestra
 - Abre la terminal e inicializa un nuevo proyecto con `npm init -y`. Esto creará el archivo `package.json`.
 > [!CAUTION]
 > A partir de la versión `5.0.0` , esta API migra de **CommonJS** a **ES Modules (ECMAScript Modules)**.
-> Para que funcione correctamente, asegurate de tener un entorno compatible con **Node.js 14 o superior** y de incluir la siguiente línea en tu ``package.json``: "type": "module"
+> Para que funcione correctamente, asegurate de tener un entorno compatible con **Node.js 14 o superior** y de incluir la siguiente línea en tu ``package.json``:
+```json
+{
+  "type": "module"
+}
+```
 - Luego, instala las dependencias necesarias: **Express JS** (entorno para desarrollar la API), **Mongoose** (biblioteca de modelado de objetos para MongoDB y Node.js), **Morgan** (middleware de registro de solicitudes HTTP), **swagger-jsdoc** (genera documentación de API a partir de comentarios JSDoc en el código) y **Swagger UI Express** (sirve una interfaz visual para interactuar con la documentación generada) con el siguiente comando:
 
 ```bash
