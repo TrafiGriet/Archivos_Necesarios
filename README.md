@@ -9,6 +9,6 @@ servidor-->>navegador: Código de Estado: 201 Created y nueva nota como datos JS
 deactivate servidor
 
 Note right of navegador: El navegador ejecuta la función callback que contiene el nuevo contenido
-Note right navegador: El servidor no redirige → el navegador no recarga ni envía nuevas solicitudes
+Note right of navegador: El servidor no redirige → el navegador no recarga ni envía nuevas solicitudes
 
 ```
