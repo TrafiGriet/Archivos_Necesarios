@@ -4,4 +4,17 @@ En este repositorio, se encuentran mis respuestas a los ejercicios del curso [Fu
 
 ## Certificado del curso 😁
 
-<img src="./Ejemplo SQL Shell (psql).jpg" alt="Ejemplo de uso SQL Shell" width="550">
+## Instrucciones de ejecución 🚀:
+
+[!IMPORTANT]
+Se recomienda crear una base de datos nueva (ej. gestion_pedidos) antes de ejecutar los scripts. Esto evitará conflictos con tablas existentes y mantendrá tu entorno organizado.
+
+Para recrear la base de datos completa en un entorno **PostgreSQL**, es indispensable ejecutar los scripts en el **siguiente orden**:
+
+1. **schema.sql**: Crea la estructura de tablas, restricciones de integridad y relaciones.
+
+2. **seed.sql**: Genera los datos de prueba (50 productos, 100 clientes y 200 pedidos con sus detalles).
+
+3. **queries.sql**: Contiene las 13 consultas analíticas solicitadas.
+
+A continuación, elegí el método que prefieras para la ejecución:
