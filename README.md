@@ -6,8 +6,8 @@ En este repositorio, se encuentran mis respuestas a los ejercicios del curso [Fu
 
 ## Instrucciones de ejecución 🚀:
 
-[!IMPORTANT]
-Se recomienda crear una base de datos nueva (ej. gestion_pedidos) antes de ejecutar los scripts. Esto evitará conflictos con tablas existentes y mantendrá tu entorno organizado.
+> [!IMPORTANT]
+> Se recomienda crear una base de datos nueva antes de ejecutar los scripts. Esto evitará conflictos con tablas existentes y mantendrá tu entorno organizado.
 
 Para recrear la base de datos completa en un entorno **PostgreSQL**, es indispensable ejecutar los scripts en el **siguiente orden**:
 
