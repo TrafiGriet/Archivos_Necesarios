@@ -4,4 +4,4 @@ En este repositorio, se encuentran mis respuestas a los ejercicios del curso [Fu
 
 ## Certificado del curso 😁
 
-<img src="./certificado-fullstack.png">
+<img src="./Ejemplo SQL Shell (psql).jpg" alt="Ejemplo de uso SQL Shell" width="250">
