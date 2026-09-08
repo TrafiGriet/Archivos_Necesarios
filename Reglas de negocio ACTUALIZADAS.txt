@@ -1,0 +1,301 @@
+Reglas de negocio — TFI Gimnasio
+1. Usuarios y autenticación
+
+RN-01 — Email único
+Cada usuario debe tener un email único dentro del sistema.
+
+RN-02 — DNI único
+Cada usuario debe tener un DNI único dentro del sistema.
+
+RN-03 — Roles de usuario
+Todo usuario debe tener uno de los siguientes roles:
+
+ALUMNO
+PROFESOR
+ADMIN_GESTION
+ADMIN_GENERAL
+
+RN-04 — Usuario inactivo
+Un usuario marcado como inactivo no puede iniciar sesión.
+
+RN-05 — Acceso según rol
+Las funcionalidades disponibles para cada usuario estarán determinadas por su rol.
+
+2. Ficha médica
+
+RN-06 — Una ficha médica por alumno
+Un alumno puede tener como máximo una ficha médica registrada.
+
+RN-07 — Ficha médica exclusiva de alumnos
+Una ficha médica solamente puede pertenecer a un usuario cuyo rol sea ALUMNO.
+
+RN-08 — Certificado médico
+La ficha médica debe contener la referencia al certificado de aptitud física almacenado en MinIO.
+
+RN-09 — Fecha de vencimiento
+La ficha médica debe registrar la fecha de vencimiento del certificado presentado por el alumno.
+
+RN-10 — Renovación de ficha médica
+Cuando el certificado médico vence, debe ser reemplazado por un nuevo certificado y actualizarse la información correspondiente de la ficha médica existente.
+
+RN-11 — Consulta de ficha médica por alumno
+Un alumno solamente puede consultar su propia ficha médica.
+
+RN-12 — Consulta de ficha médica por profesor
+Un profesor puede consultar la ficha médica de los alumnos que estén asociados a él mediante una rutina o un turno.
+
+RN-13 — Gestión de ficha médica por administración
+ADMIN_GESTION y ADMIN_GENERAL pueden registrar y actualizar la ficha médica de los alumnos.
+
+3. Planes
+
+RN-14 — Plan como servicio del gimnasio
+Cada plan representa un servicio ofrecido por el gimnasio y posee un precio mensual.
+
+RN-15 — Activación e inactivación de planes
+Un plan puede ser marcado como inactivo sin ser eliminado del sistema.
+
+RN-16 — Conservación del historial
+La inactivación de un plan no debe eliminar ni modificar los pagos históricos asociados a dicho plan.
+
+RN-17 — Plan inactivo
+Un plan inactivo no puede utilizarse para registrar nuevos pagos.
+
+4. Pagos y cuotas
+
+RN-18 — Pago perteneciente a un alumno
+Cada pago debe estar asociado a un usuario cuyo rol sea ALUMNO.
+
+RN-19 — Pago perteneciente a un plan
+Cada pago debe estar asociado a un plan existente.
+
+RN-20 — Monto abonado
+El pago debe conservar el monto efectivamente abonado por el alumno.
+
+RN-21 — Vencimiento de la cuota
+La cuota correspondiente a un período mensual vence el día 10 de dicho mes.
+
+RN-22 — Pago dentro de término
+Un pago realizado hasta el día 10 inclusive se considera realizado dentro del período establecido.
+
+RN-23 — Pago fuera de término
+Un pago realizado después del día 10 debe poder registrarse igualmente.
+
+RN-24 — Un pago por período
+Un alumno no puede tener más de un pago correspondiente al mismo período mensual. El período mensual se determina a partir del mes y año de fecha_vencimiento.
+
+RN-25 — Historial de pagos
+Los pagos registrados deben conservarse como historial y no deben eliminarse por el hecho de que correspondan a períodos anteriores.
+
+RN-26 — Comprobante de pago
+El comprobante asociado a un pago se almacena en MinIO y el sistema conserva su referencia.
+
+5. Ejercicios
+
+RN-27 — Catálogo de ejercicios
+Los ejercicios forman parte de un catálogo general del gimnasio y no pertenecen exclusivamente a un alumno.
+
+RN-28 — Reutilización de ejercicios
+Un mismo ejercicio puede formar parte de múltiples rutinas.
+
+RN-29 — Información del ejercicio
+Un ejercicio puede contener nombre, grupo muscular, descripción e imagen demostrativa.
+
+RN-30 — Imagen del ejercicio
+La imagen demostrativa del ejercicio se almacena en MinIO y el sistema conserva su referencia.
+
+6. Rutinas
+
+RN-31 — Rutina perteneciente a un alumno
+Cada rutina debe estar asociada a un usuario cuyo rol sea ALUMNO.
+
+RN-32 — Rutina creada por un profesor
+Cada rutina debe estar asociada a un usuario cuyo rol sea PROFESOR.
+
+RN-33 — Múltiples rutinas
+Un alumno puede tener múltiples rutinas registradas en el sistema.
+
+RN-34 — Una única rutina activa
+Un alumno puede tener como máximo una rutina activa simultáneamente.
+
+RN-35 — Historial de rutinas
+Las rutinas anteriores pueden permanecer almacenadas como inactivas.
+
+RN-36 — Gestión de rutinas por profesor
+Un profesor puede crear rutinas para cualquier alumno y puede modificar o consultar las rutinas de los alumnos asociados a él.
+
+RN-37 — Consulta de rutina por alumno
+Un alumno puede consultar su propia rutina, incluyendo los ejercicios, series, repeticiones, peso, día y orden establecidos.
+
+RN-38 — Alumno no modifica su rutina
+El alumno no puede crear ni modificar rutinas en el MVP.
+
+7. Turnos
+
+RN-39 — Turno perteneciente a un profesor
+Cada turno debe estar asociado a un usuario cuyo rol sea PROFESOR.
+
+RN-40 — Turnos del profesor
+Un profesor puede tener múltiples turnos.
+
+RN-41 — Sin superposición de turnos del profesor
+Un profesor no puede tener dos turnos superpuestos en el mismo día y horario.
+
+RN-42 — Inscripción de alumnos a turnos
+Un alumno puede estar inscripto en uno o más turnos.
+
+RN-43 — Un alumno no puede repetirse en un turno
+Un alumno no puede estar inscripto más de una vez en el mismo turno.
+
+RN-44 — Sin superposición de turnos del alumno
+Un alumno no puede estar inscripto en dos turnos que se superpongan en el mismo día y horario.
+
+8. Asistencias
+
+RN-45 — Asistencia perteneciente a un alumno
+Cada asistencia debe estar asociada a un único usuario cuyo rol sea ALUMNO.
+
+RN-46 — Turno opcional
+Una asistencia puede estar asociada a un turno, pero también puede registrarse sin turno.
+
+Esto permite distinguir entre:
+
+Asistencia a una clase ej: funcional.
+
+y:
+
+Ingreso para entrenamiento libre
+
+RN-47 — Registro de asistencia
+Solamente pueden registrar asistencias los usuarios con rol:
+
+PROFESOR
+ADMIN_GESTION
+ADMIN_GENERAL
+
+RN-48 — Registro del responsable
+Toda asistencia debe identificar al usuario que realizó el registro mediante registrado_por.
+
+9. Relación profesor-alumno
+
+RN-49 — Asociación mediante rutina
+Un profesor se considera asociado a un alumno cuando existe una rutina de dicho alumno creada por ese profesor.
+
+RN-50 — Asociación mediante turno
+Un profesor se considera asociado a un alumno cuando dicho alumno está inscripto en un turno dictado por ese profesor.
+
+RN-51 — Consulta de alumnos asociados
+Un profesor solamente puede consultar la información de los alumnos que estén asociados a él mediante una rutina o un turno.
+
+RN-52 — No existe relación directa profesor-alumno
+La asociación entre profesores y alumnos se determina mediante las rutinas y los turnos, sin necesidad de una relación directa adicional.
+
+10. Permisos de ALUMNO
+
+RN-53 — Información propia del alumno
+El alumno solamente puede consultar información correspondiente a su propia cuenta.
+
+RN-54 — Perfil propio
+El alumno puede consultar su propio perfil.
+
+RN-55 — Rutina propia
+El alumno puede consultar su rutina.
+
+RN-56 — Cuota propia
+El alumno puede consultar el estado y plan correspondiente a su cuota.
+
+RN-57 — Historial propio
+El alumno puede consultar su historial de pagos.
+
+RN-58 — Asistencias propias
+El alumno puede consultar sus propias asistencias.
+
+RN-59 — Ficha médica propia
+El alumno puede consultar su propia ficha médica.
+
+11. Permisos de PROFESOR
+
+RN-60 — Alumnos asociados
+El profesor puede consultar los alumnos asociados a él mediante rutinas o turnos.
+
+RN-61 — Información de alumnos asociados
+El profesor puede consultar los datos personales de los alumnos asociados a él, según los permisos definidos por el sistema.
+
+RN-62 — Ficha médica de alumnos asociados
+El profesor puede consultar la ficha médica de los alumnos asociados a él.
+
+RN-63 — Gestión de rutinas
+El profesor puede crear rutinas para cualquier alumno y puede modificar y consultar las rutinas de los alumnos asociados a él.
+
+RN-64 — Asistencias
+El profesor puede registrar asistencias.
+
+RN-65 — Turnos propios
+El profesor puede consultar los turnos que tiene asignados.
+
+12. Permisos de ADMIN_GESTION
+
+RN-66 — Gestión de alumnos
+ADMIN_GESTION puede gestionar los alumnos.
+
+RN-67 — Gestión de fichas médicas
+ADMIN_GESTION puede registrar y actualizar fichas médicas.
+
+RN-68 — Registro de pagos
+ADMIN_GESTION puede registrar pagos de alumnos.
+
+RN-69 — Gestión de turnos
+ADMIN_GESTION puede gestionar los turnos.
+
+RN-70 — Registro de asistencias
+ADMIN_GESTION puede registrar asistencias.
+
+RN-71 — Restricción financiera
+ADMIN_GESTION no puede acceder a las estadísticas ni a la información financiera reservada para ADMIN_GENERAL.
+
+13. Permisos de ADMIN_GENERAL
+
+RN-72 — Permisos administrativos completos
+ADMIN_GENERAL posee los permisos de ADMIN_GESTION y permisos administrativos adicionales.
+
+RN-73 — Gestión de profesores
+ADMIN_GENERAL puede gestionar profesores.
+
+RN-74 — Gestión de planes
+ADMIN_GENERAL puede gestionar los planes del gimnasio.
+
+RN-75 — Información financiera
+ADMIN_GENERAL puede consultar información financiera del gimnasio.
+
+RN-76 — Estadísticas
+ADMIN_GENERAL puede consultar estadísticas del gimnasio.
+
+RN-77 — Registro de asistencias
+ADMIN_GENERAL puede registrar asistencias.
+
+14. Otras reglas de negocio
+
+RN-78 — Validación de asistencia asociada a un turno
+Cuando una asistencia se registra asociada a un turno:
+- el turno debe existir;
+- si quien registra es un PROFESOR, el turno debe pertenecer a dicho profesor;
+- el alumno debe estar inscripto en dicho turno.
+Cuando la asistencia no está asociada a un turno (turno_id = NULL), estas condiciones no son aplicables.
+
+RN-79 — Determinación del plan actual del alumno
+El plan actual de un alumno se determina a partir del último pago registrado para dicho alumno. El plan asociado a dicho pago se considera el plan vigente del alumno hasta que se registre un nuevo pago asociado a otro plan.
+Los pagos anteriores conservan el plan asociado al momento en que fueron registrados y forman parte del historial de pagos del alumno.
+
+RN-80 — Turnos de profesor inactivo
+Cuando un profesor es desactivado, sus turnos activos deben pasar a estado inactivo y dejar de estar disponibles para nuevas inscripciones y operaciones de gestión. Los turnos y registros históricos asociados se conservan en el sistema.
+
+RN-81 — Turno activo
+Un turno debe encontrarse activo para poder utilizarse en nuevas inscripciones o en operaciones de gestión que impliquen su disponibilidad. Un turno inactivo permanece almacenado para conservar el historial.
+
+RN-82 — Gestión de administradores de gestión
+ADMIN_GENERAL puede crear, consultar, modificar, desactivar y reactivar usuarios cuyo rol sea ADMIN_GESTION.
+
+RN-83 — Administrador general inicial
+El sistema debe contar con al menos un usuario con rol ADMIN_GENERAL habilitado para realizar la administración inicial del sistema.
+
+El ADMIN_GENERAL inicial no es creado mediante las operaciones de gestión de usuarios disponibles para los demás roles, sino mediante un mecanismo seguro de inicialización del sistema.
