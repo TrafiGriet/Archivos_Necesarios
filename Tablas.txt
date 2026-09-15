@@ -1,0 +1,120 @@
+Es el corazón del sistema. En lugar de tener tablas separadas para "Alumnos", "Profesores" y "Administradores", centralizamos a todas las personas físicas que interactúan con el software en esta única tabla. El nivel de acceso y las funciones que pueden realizar se controlan mediante el campo rol.
+Es referenciada mediante claves foráneas desde las entidades que requieren identificar a un alumno, profesor o administrador.
+USUARIO
+────────────────
+id [BIGINT] (Primary Key)
+email [VARCHAR] (Unique)
+password_hash [VARCHAR]
+nombre [VARCHAR]
+apellido [VARCHAR]
+dni [VARCHAR] (Unique)
+telefono [VARCHAR]
+activo [BOOLEAN] 
+rol [ENUM('ALUMNO', 'PROFESOR', 'ADMIN_GESTION', 'ADMIN_GENERAL')]
+
+
+Almacena el registro del certificado de aptitud física (apto médico) de los alumnos, incluyendo la referencia al archivo físico subido a MinIO y la fecha en la que caduca legalmente.
+Relación: 1 a 1 con USUARIO (Alumno). Un alumno puede tener una única ficha médica registrada en el sistema. Esto se garantiza con la restricción UNIQUE en el campo alumno_id
+FICHA_MEDICA
+────────────────
+id [BIGINT] (Primary Key)
+alumno_id [BIGINT] (Foreign Key -> USUARIO) (+ Constraint UNIQUE para relación 1 a 1)
+certificado_key_minio [VARCHAR] --> representa al pdf/imagen del apto médico.
+observaciones [TEXT]
+fecha_actualizacion [DATETIME]
+fecha_vencimiento [DATE]
+
+
+Funciona como el catálogo de servicios comerciales que ofrece el gimnasio (por ejemplo: "Pase Libre", "Musculación 3 días", "Crossfit"). Contiene el precio y un interruptor para dejar de ofrecerlo (activo = false) sin perder el historial.
+Relación: 1 a N con PAGO. Un mismo plan puede estar asociado a muchísimos pagos de diferentes alumnos a lo largo del tiempo.
+PLAN
+────────────────
+id [BIGINT] (Primary Key)
+nombre [VARCHAR]
+descripcion [TEXT]
+precio_mensual [DECIMAL(10,2)]
+activo [BOOLEAN] 
+
+
+Es el registro contable y transaccional del sistema. Cada vez que un alumno abona su cuota, se genera una nueva fila aquí. Sirve para calcular dinámicamente si un alumno está "Al día" o "Vencido" comparando la fecha_vencimiento con la fecha actual. Además, guarda el recibo digital en MinIO.
+Relaciones:
+N a 1 con USUARIO (Alumno): Un alumno puede tener múltiples pagos en su historial.
+N a 1 con PLAN: Muchos pagos pueden corresponder a un mismo plan.
+PAGO
+────────────────
+id [BIGINT] (Primary Key)
+alumno_id [BIGINT] (Foreign Key -> USUARIO)
+plan_id [BIGINT] (Foreign Key -> PLAN)
+monto_abonado [DECIMAL(10,2)]
+fecha_pago [DATE]
+fecha_vencimiento[DATE]
+metodo_pago [VARCHAR(50)]
+comprobante_key_minio --> adjunto o recibo digital guardado en minio
+(+ Constraint UNIQUE(alumno_id, fecha_vencimiento) para reforzar la regla de negocio de un único pago por alumno y periodo )*
+
+Es el catálogo técnico o biblioteca de movimientos del gimnasio (ej: "Press de Banca", "Sentadilla"). Guarda la descripción técnica y la referencia a un GIF o imagen demostrativa en MinIO. Es una tabla independiente que no pertenece a ningún alumno en particular.
+Relación: 1 a N con RUTINA_EJERCICIO. Un mismo ejercicio puede formar parte de miles de rutinas diferentes.
+EJERCICIO
+────────────────
+id [BIGINT] (Primary Key)
+nombre [VARCHAR]
+grupo_muscular [VARCHAR]
+descripcion [TEXT]
+imagen_key_minio [VARCHAR]
+
+
+Actúa como el "encabezado" o la carpeta principal de un plan de entrenamiento. Solo guarda información general: a quién le pertenece, quién la creó y si es la rutina que el alumno está usando actualmente (activa).
+Un alumno solamente puede tener una rutina activa.
+Relaciones:
+N a 1 con USUARIO (Alumno): Un alumno tiene su rutina.
+N a 1 con USUARIO (Profesor): Un profesor (creador) diseña múltiples rutinas.
+RUTINA
+────────────────
+id [BIGINT] (Primary Key)
+alumno_id [BIGINT] (Foreign Key -> USUARIO)
+profesor_id [BIGINT] (Foreign Key -> USUARIO)
+nombre [VARCHAR]
+fecha_creacion [DATE]
+activa [BOOLEAN]
+
+
+Es una "tabla intermedia con atributos". Su función es conectar una Rutina con los Ejercicios, pero agregando los detalles de ejecución. Aquí es donde se define que en esa rutina específica, ese ejercicio se hace con "4 series de 10 repeticiones, con 20kg, los días Lunes".
+Relaciones:
+N a 1 con RUTINA: Muchos detalles de ejercicios pertenecen a una sola rutina.
+N a 1 con EJERCICIO: Apunta al ejercicio base del catálogo.
+RUTINA_EJERCICIO
+────────────────
+id [BIGINT] (Primary Key)
+rutina_id [BIGINT] (Foreign Key -> RUTINA)
+ejercicio_id [BIGINT] (Foreign Key -> EJERCICIO)
+series [INT]
+repeticiones [INT]
+peso [DECIMAL(5,2)]
+dia_semana [ENUM('LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO')]
+orden [INT]
+
+
+Define un bloque de tiempo específico en la grilla horaria del gimnasio (ej: "Lunes de 18:00 a 19:00"). Sirve para organizar la agenda y limitar a qué clases puede asistir un alumno.
+Relaciones:
+N a 1 con USUARIO (Profesor): El turno tiene asignado a un profesor que lo dicta.
+TURNO
+────────────────
+id [BIGINT] (Primary Key)
+profesor_id [BIGINT] (Foreign Key -> USUARIO)
+dia_semana [ENUM('LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO')]
+hora_inicio[TIME]
+hora_fin [TIME]
+activo [BOOLEAN]
+
+
+Es una pura tabla intermedia que resuelve la relación de "Muchos a Muchos" (N:M) entre Alumnos y Turnos. Su única responsabilidad es decir: "El alumno X está inscripto en el turno Y".
+Relaciones:
+N a 1 con USUARIO (Alumno).
+N a 1 con TURNO.
+Regla: La restricción UNIQUE(alumno_id, turno_id) asegura que el sistema no anote dos veces a la misma persona en la misma clase.
+ALUMNO_TURNO
+────────────────
+id [BIGINT] (Primary Key)
+alumno_id [BIGINT] (Foreign Key -> USUARIO)
+turno_id [BIGINT] (Foreign Key -> TURNO)
+(+ Constraint UNIQUE(alumno_id, turno_id) para evitar duplicados)*
